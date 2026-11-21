@@ -91,8 +91,9 @@ These rules apply when working in a Git repository, including non-software work.
   Tools alone are not enough.
 - omso Builder builds this repository from `omso-build.json` (build, tests, `--self-test`, copy into
   `/Applications/omso`). Keep that file working when build or test commands change.
-- No remote yet; `main` is the working branch. Commit validated work locally; create a remote, push or install
-  only when the user asks. Other projects' install and push permissions don't apply here.
+- The remote is the GitHub repository `omsomso/midi-press` (`origin`), private for now; `main` is the working
+  branch. Commit validated work; push or install only when the user asks. Other projects' install and push
+  permissions don't apply here.
 - MidiPress ships under the Kitedrake label: the bundle ID is `com.kitedrake.midipress`. Changing it makes macOS
   forget the Accessibility permission and moves the saved defaults; don't change it without the user.
 - Treat the repository as public: keep personal paths, account details, private material and real device or app
