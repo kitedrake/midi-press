@@ -452,7 +452,7 @@ public struct Mapping: Identifiable, Hashable, Sendable, Codable {
     }
 }
 
-/// Everything Keystrike saves: `setup.json`.
+/// Everything MidiPress saves: `setup.json`.
 public struct Setup: Codable, Hashable, Sendable {
     public static let currentSchema = 1
 
@@ -461,7 +461,7 @@ public struct Setup: Codable, Hashable, Sendable {
     public var isActive: Bool
     /// How long each key is held down, in milliseconds.
     public var keyHoldMS: Int
-    /// Names of MIDI inputs Keystrike doesn't listen to.
+    /// Names of MIDI inputs MidiPress doesn't listen to.
     public var ignoredInputs: [String]
     public var mappings: [Mapping]
 

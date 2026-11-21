@@ -1,11 +1,11 @@
 import XCTest
-@testable import KeystrikeCore
+@testable import MidiPressCore
 
 final class StoreTests: XCTestCase {
     var folder: URL!
 
     override func setUpWithError() throws {
-        folder = FileManager.default.temporaryDirectory.appendingPathComponent("keystrike-tests-\(UUID().uuidString)")
+        folder = FileManager.default.temporaryDirectory.appendingPathComponent("midipress-tests-\(UUID().uuidString)")
     }
 
     override func tearDownWithError() throws {

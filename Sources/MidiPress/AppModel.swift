@@ -1,5 +1,5 @@
 import AppKit
-import KeystrikeCore
+import MidiPressCore
 import Observation
 import SwiftUI
 import UniformTypeIdentifiers
@@ -95,7 +95,7 @@ final class EventInbox: @unchecked Sendable {
 @MainActor
 @Observable
 final class AppModel {
-    static let shared = AppModel(demo: ProcessInfo.processInfo.environment["KEYSTRIKE_SNAPSHOT"] != nil)
+    static let shared = AppModel(demo: ProcessInfo.processInfo.environment["MIDIPRESS_SNAPSHOT"] != nil)
 
     /// With `demo`, the made-up setup is there before any window is built (screenshots, see Snapshot).
     /// Otherwise the saved mappings are read here, also before any window exists: a sidebar list that fills in
@@ -119,7 +119,7 @@ final class AppModel {
     var countdown: (mapping: UUID, seconds: Int)?
     var alert: String?
     var isDemo = false
-    /// False when setup.json came from a newer Keystrike: it is never overwritten.
+    /// False when setup.json came from a newer MidiPress: it is never overwritten.
     var canSave = true
     var virtualPortError: String?
     var midiError: String?
@@ -142,7 +142,7 @@ final class AppModel {
         guard !started else { return }
         started = true
         guard !isDemo else { return }
-        if let id = Bundle.main.bundleIdentifier { engine.runner.protectedApp = (id, "Keystrike") }
+        if let id = Bundle.main.bundleIdentifier { engine.runner.protectedApp = (id, "MidiPress") }
         inbox.deliver = { [weak self] lines, fired, learned in self?.receive(lines, fired: fired, learned: learned) }
         engine.onMessage = { [inbox] message, fired in inbox.message(message, fired: fired) }
         engine.runner.onEvent = { [inbox] event in inbox.run(event) }
@@ -172,10 +172,10 @@ final class AppModel {
         case .newer(let loaded, let schema):
             setup = loaded ?? Setup()
             canSave = false
-            alert = "Your mappings were saved by a newer version of Keystrike (format \(schema)). They're shown as far as this version can read them, and changes won't be saved. Update Keystrike to edit them."
+            alert = "Your mappings were saved by a newer version of MidiPress (format \(schema)). They're shown as far as this version can read them, and changes won't be saved. Update MidiPress to edit them."
         case .unreadable(let aside, let error):
             setup = Setup()
-            alert = "Keystrike couldn't read its saved mappings, so it started empty. "
+            alert = "MidiPress couldn't read its saved mappings, so it started empty. "
                 + (aside.map { "The file was kept as \($0.lastPathComponent) in \($0.deletingLastPathComponent().path)." } ?? "")
                 + "\n\n\(error)"
         }
@@ -503,7 +503,7 @@ final class AppModel {
         guard !mappings.isEmpty, !isDemo else { return }
         let panel = NSSavePanel()
         panel.allowedContentTypes = [.json]
-        panel.nameFieldStringValue = mappings.count == 1 ? "\(mappings[0].name).json" : "Keystrike Mappings.json"
+        panel.nameFieldStringValue = mappings.count == 1 ? "\(mappings[0].name).json" : "MidiPress Mappings.json"
         guard panel.runModal() == .OK, let url = panel.url else { return }
         do {
             try MappingFile(mappings: mappings).encoded().write(to: url, options: .atomic)
@@ -523,7 +523,7 @@ final class AppModel {
             do {
                 added += try MappingFile.mappings(from: Data(contentsOf: url))
             } catch {
-                alert = "Couldn't import \(url.lastPathComponent): it isn't a Keystrike mappings file."
+                alert = "Couldn't import \(url.lastPathComponent): it isn't a MidiPress mappings file."
             }
         }
         guard !added.isEmpty else { return }

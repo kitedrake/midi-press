@@ -1,7 +1,7 @@
 import Foundation
-import KeystrikeCore
+import MidiPressCore
 
-/// `Keystrike --self-test [folder] | --list-inputs | --monitor | --help`
+/// `MidiPress --self-test [folder] | --list-inputs | --monitor | --help`
 enum CommandLineTool {
     static func run(_ arguments: [String]) -> Int32 {
         switch arguments.first {
@@ -10,8 +10,8 @@ enum CommandLineTool {
         case "--monitor": return monitor()
         default:
             print("""
-            Keystrike: turns MIDI messages into keyboard shortcuts and macros.
-              --list-inputs     The MIDI inputs Core MIDI offers, and whether Keystrike may press keys.
+            MidiPress: turns MIDI messages into keyboard shortcuts and macros.
+              --list-inputs     The MIDI inputs Core MIDI offers, and whether MidiPress may press keys.
               --monitor         Prints incoming MIDI until Ctrl-C. Presses no keys.
               --self-test [dir] Checks MIDI decoding, matching, the macro runner, saving (in dir, or a temporary
                                 folder) and a Core MIDI round trip through a temporary virtual input and port.
@@ -38,7 +38,7 @@ enum CommandLineTool {
             fflush(stdout)
         }
         do {
-            try input.start(clientName: "Keystrike Monitor")
+            try input.start(clientName: "MidiPress Monitor")
         } catch {
             print(error.localizedDescription)
             return 1
@@ -122,7 +122,7 @@ enum SelfTest {
 
         // Saving
         let base = folder.map { URL(fileURLWithPath: $0, isDirectory: true) }
-            ?? FileManager.default.temporaryDirectory.appendingPathComponent("keystrike-self-test-\(UUID().uuidString)")
+            ?? FileManager.default.temporaryDirectory.appendingPathComponent("midipress-self-test-\(UUID().uuidString)")
         let store = Store(folder: base)
         let setup = Setup(mappings: [bounce, onlyLogic])
         do {
@@ -137,7 +137,7 @@ enum SelfTest {
         }
         if folder == nil { try? FileManager.default.removeItem(at: base) }
 
-        // Core MIDI round trip: a temporary virtual input and Keystrike's own port, in this process.
+        // Core MIDI round trip: a temporary virtual input and MidiPress's own port, in this process.
         let midiOutput = RecordingOutput()
         let engine = Engine(output: midiOutput)
         engine.apply(Setup(mappings: [bounce]))
@@ -154,18 +154,18 @@ enum SelfTest {
         let input = MIDIInput()
         input.onMessages = { engine.receive($0) }
         do {
-            try input.start(clientName: "Keystrike Self-Test")
-            try input.setVirtualPort(enabled: true, name: "Keystrike Self-Test Port", uniqueID: nil)
-            let sender = try MIDITestSender(name: "Keystrike Self-Test Pads")
+            try input.start(clientName: "MidiPress Self-Test")
+            try input.setVirtualPort(enabled: true, name: "MidiPress Self-Test Port", uniqueID: nil)
+            let sender = try MIDITestSender(name: "MidiPress Self-Test Pads")
             input.reconnect()
             sender.emit([words[0]])
-            let sent = sender.send([words[0]], toDestinationNamed: "Keystrike Self-Test Port")
+            let sent = sender.send([words[0]], toDestinationNamed: "MidiPress Self-Test Port")
             let both = arrived.wait(timeout: .now() + 5) == .success && arrived.wait(timeout: .now() + 5) == .success
             engine.runner.waitUntilIdle()
             lock.lock()
             let sources = heard
             lock.unlock()
-            check("Core MIDI: a virtual input and the Keystrike port both fire the mapping", sent && both && sources.count == 2,
+            check("Core MIDI: a virtual input and the MidiPress port both fire the mapping", sent && both && sources.count == 2,
                   "port found: \(sent), heard from: \(sources.sorted())")
             check("Core MIDI: each run pressed its keys", midiOutput.events.count == expected.count * 2,
                   "\(midiOutput.events.count) events")

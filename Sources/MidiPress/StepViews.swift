@@ -1,5 +1,5 @@
 import AppKit
-import KeystrikeCore
+import MidiPressCore
 import Observation
 import SwiftUI
 

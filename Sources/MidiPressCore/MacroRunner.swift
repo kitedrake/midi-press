@@ -59,11 +59,11 @@ public final class MacroRunner: @unchecked Sendable {
     public var onEvent: ((RunEvent) -> Void)?
     /// Runs waiting beyond this are dropped (a knob mapped to a long macro can't pile up minutes of work).
     public static let maxPending = 64
-    /// Keys meant for "whichever app is in front" aren't sent while this app (Keystrike itself) is in front, so a
+    /// Keys meant for "whichever app is in front" aren't sent while this app (MidiPress itself) is in front, so a
     /// pad pressed while editing never types into the editor or fires its menu shortcuts.
     public var protectedApp: (bundleID: String, name: String)?
 
-    private let queue = DispatchQueue(label: "Keystrike.macros", qos: .userInteractive)
+    private let queue = DispatchQueue(label: "MidiPress.macros", qos: .userInteractive)
     private let lock = NSLock()
     private var generation = 0
     private var pending = 0

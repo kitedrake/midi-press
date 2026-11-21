@@ -1,11 +1,11 @@
 import Foundation
 
-/// Saves and loads `setup.json` in `~/Library/Application Support/Keystrike`.
+/// Saves and loads `setup.json` in `~/Library/Application Support/MidiPress`.
 public final class Store {
     public enum LoadResult {
         case missing
         case loaded(Setup)
-        /// Saved by a newer Keystrike: used as far as it can be read, but never overwritten.
+        /// Saved by a newer MidiPress: used as far as it can be read, but never overwritten.
         case newer(Setup?, schema: Int)
         /// Couldn't be read; the file was moved aside (to `movedTo`) so nothing is lost.
         case unreadable(movedTo: URL?, error: String)
@@ -16,7 +16,7 @@ public final class Store {
 
     public static var defaultFolder: URL {
         FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("Keystrike", isDirectory: true)
+            .appendingPathComponent("MidiPress", isDirectory: true)
     }
 
     public init(folder: URL = Store.defaultFolder) {
@@ -62,7 +62,7 @@ public struct MappingFile: Codable {
 
     public init(mappings: [Mapping]) {
         schema = Setup.currentSchema
-        app = "Keystrike"
+        app = "MidiPress"
         self.mappings = mappings
     }
 

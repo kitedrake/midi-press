@@ -1,4 +1,4 @@
-import KeystrikeCore
+import MidiPressCore
 import SwiftUI
 
 /// The sidebar: every mapping, with what fires it and what it does.
@@ -82,7 +82,7 @@ struct MappingRow: View {
     }
 }
 
-/// Which MIDI inputs Keystrike hears, at the foot of the sidebar.
+/// Which MIDI inputs MidiPress hears, at the foot of the sidebar.
 struct InputsFooter: View {
     @Environment(AppModel.self) private var model
 
@@ -104,10 +104,10 @@ struct InputsFooter: View {
                     Image(systemName: "cable.connector")
                 }
                 .foregroundStyle(.secondary)
-                .help("The MIDI inputs Keystrike listens to. Choose them in Settings.")
+                .help("The MIDI inputs MidiPress listens to. Choose them in Settings.")
             }
             if model.offersVirtualPort {
-                Label("MIDI port “Keystrike” open to other apps", systemImage: "arrow.down.to.line")
+                Label("MIDI port “MidiPress” open to other apps", systemImage: "arrow.down.to.line")
                     .foregroundStyle(.secondary)
             }
         }

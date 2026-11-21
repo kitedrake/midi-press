@@ -1,7 +1,7 @@
 import Carbon.HIToolbox
 import Foundation
 
-/// The keys Keystrike can press: hardware key codes, how to show them, and the flags a real keyboard adds to them.
+/// The keys MidiPress can press: hardware key codes, how to show them, and the flags a real keyboard adds to them.
 ///
 /// Letter, number and punctuation keys are named with the current keyboard layout (on a German layout the key
 /// left of T shows "Z"), so a shortcut reads the way it's printed on the user's keyboard.

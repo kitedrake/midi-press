@@ -1,5 +1,5 @@
 import Foundation
-@testable import KeystrikeCore
+@testable import MidiPressCore
 
 /// Records what the runner would do, with a made-up set of running apps. Sleeping only adds up time.
 final class FakeOutput: KeyOutput, @unchecked Sendable {

@@ -20,10 +20,10 @@ public struct MIDIError: LocalizedError {
     public var errorDescription: String? { "\(operation) failed (Core MIDI error \(status))." }
 }
 
-/// Listens to every MIDI input (except ignored ones) and, optionally, to a virtual MIDI port named "Keystrike"
+/// Listens to every MIDI input (except ignored ones) and, optionally, to a virtual MIDI port named "MidiPress"
 /// that other apps (a DAW, a script) can send to.
 public final class MIDIInput: @unchecked Sendable {
-    public static let defaultPortName = "Keystrike"
+    public static let defaultPortName = "MidiPress"
 
     /// Called on Core MIDI's receive thread with each batch of decoded messages.
     public var onMessages: (([MIDIMessage]) -> Void)?
@@ -50,7 +50,7 @@ public final class MIDIInput: @unchecked Sendable {
         if client != 0 { MIDIClientDispose(client) }
     }
 
-    public func start(clientName: String = "Keystrike") throws {
+    public func start(clientName: String = "MidiPress") throws {
         guard !isStarted else { return }
         var status = MIDIClientCreateWithBlock(clientName as CFString, &client) { [weak self] notification in
             guard notification.pointee.messageID == .msgSetupChanged else { return }
@@ -239,7 +239,7 @@ public final class MIDITestSender {
         withList(words) { MIDIReceivedEventList(source, $0) }
     }
 
-    /// Sends to a destination by name (as a DAW sending to Keystrike's port would). False if there is no such port.
+    /// Sends to a destination by name (as a DAW sending to MidiPress's port would). False if there is no such port.
     public func send(_ words: [UInt32], toDestinationNamed destinationName: String) -> Bool {
         let count = MIDIGetNumberOfDestinations()
         guard let destination = (0..<count).map(MIDIGetDestination).first(where: { MIDIInput.displayName($0) == destinationName })

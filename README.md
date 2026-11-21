@@ -1,7 +1,7 @@
-# Keystrike
+# MidiPress
 
 A macOS app (SwiftUI, Liquid Glass) that turns MIDI messages into keyboard shortcuts and macros. Press a pad, hit a
-button or turn a knob on any MIDI controller, and Keystrike presses keys for you: one shortcut, or a sequence of
+button or turn a knob on any MIDI controller, and MidiPress presses keys for you: one shortcut, or a sequence of
 shortcuts, typed text and app switches with the timing you set, in the app you choose.
 
 Use it for anything that has a keyboard shortcut but no MIDI control: key commands in a DAW that can't be
@@ -27,17 +27,17 @@ sends value 1 of CC 119 bringing Logic forward, pressing ⌃⌘B, waiting 400 ms
   app in front you get three seconds to switch to it.
 - **Mappings › Stop Running Mappings** (⌘., also in the menu bar) stops the running mapping at its next step and
   drops the waiting ones. Mappings run one at a time, in the order they fired; more than 64 waiting are dropped.
-- **Mappings Active** (toolbar power button, ⇧⌘A, menu bar) pauses or resumes everything. Keystrike keeps working
+- **Mappings Active** (toolbar power button, ⇧⌘A, menu bar) pauses or resumes everything. MidiPress keeps working
   from the menu bar when its window is closed.
 - **MIDI Monitor** (⌥⌘M): every incoming message, the mappings it fired and how each run went (ran, skipped and
   why, failed). **Copy** puts it on the clipboard.
 - **Settings** (⌘,): open at login, Dock icon, how long each key is held (default 12 ms), which MIDI inputs to
-  listen to, the "Keystrike" MIDI port, and the Accessibility permission.
+  listen to, the "MidiPress" MIDI port, and the Accessibility permission.
 - **File › Import / Export**: mappings as JSON, to back up or share. Imported mappings are added to the list.
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="docs/screenshots/mapping-light.png">
-  <img src="docs/screenshots/mapping-dark.png" alt="Keystrike with a pad mapped to a Logic Pro macro">
+  <img src="docs/screenshots/mapping-dark.png" alt="MidiPress with a pad mapped to a Logic Pro macro">
 </picture>
 
 <picture>
@@ -49,36 +49,36 @@ sends value 1 of CC 119 bringing Logic forward, pressing ⌃⌘B, waiting 400 ms
   <img src="docs/screenshots/monitor-dark.png" alt="The MIDI Monitor" width="49%">
 </picture>
 
-*Screenshots made with Keystrike's snapshot mode on a made-up setup (see Development); GitHub shows the light or
+*Screenshots made with MidiPress's snapshot mode on a made-up setup (see Development); GitHub shows the light or
 dark set to match your theme.*
 
-Keystrike is open source under the GNU General Public License, version 3 or later (`LICENSE`). Copyright (C) 2026
+MidiPress is open source under the GNU General Public License, version 3 or later (`LICENSE`). Copyright (C) 2026
 omso.
 
 ## Permission: Accessibility
 
 macOS only lets an app press keys for you once it is allowed under **System Settings › Privacy & Security ›
-Accessibility**. Until then Keystrike shows a banner with **Allow…**, mappings still fire (the monitor shows them),
-and macOS drops the keys without a word. Keystrike reads MIDI and presses keys on this Mac; it sends nothing
+Accessibility**. Until then MidiPress shows a banner with **Allow…**, mappings still fire (the monitor shows them),
+and macOS drops the keys without a word. MidiPress reads MIDI and presses keys on this Mac; it sends nothing
 anywhere.
 
 macOS ties the permission to the app's signature. A plain `./build.sh` signs ad-hoc, so **every rebuild counts as a
-new app**: turn Keystrike off and on again in the Accessibility list (or remove it with − and allow it again). Build
+new app**: turn MidiPress off and on again in the Accessibility list (or remove it with − and allow it again). Build
 with a stable identity to keep the permission across builds:
 
 ```sh
 SIGN_IDENTITY="Apple Development: …" ./build.sh
 ```
 
-While Keystrike itself is in front, mappings whose keys go to "whichever app is in front" are skipped (the monitor
-says so), so a pad pressed while you edit never types into the editor or fires Keystrike's own shortcuts. Mappings
+While MidiPress itself is in front, mappings whose keys go to "whichever app is in front" are skipped (the monitor
+says so), so a pad pressed while you edit never types into the editor or fires MidiPress's own shortcuts. Mappings
 that bring their app forward, or start by switching app, still run.
 
 ## MIDI
 
-Keystrike listens to every MIDI input macOS offers (USB, Bluetooth, network sessions, the IAC driver), except the
+MidiPress listens to every MIDI input macOS offers (USB, Bluetooth, network sessions, the IAC driver), except the
 ones turned off in Settings, and picks up devices as they're plugged in. It also offers a virtual MIDI port named
-**Keystrike**, so other apps can send to it directly: a DAW track's MIDI output, a control-surface script, a
+**MidiPress**, so other apps can send to it directly: a DAW track's MIDI output, a control-surface script, a
 Max patch. The port keeps its Core MIDI unique ID across launches, so apps that remember ports find it again.
 
 Messages are read with the MIDI 1.0 protocol (Core MIDI converts MIDI 2.0 sources). Notes are named with middle C
@@ -89,17 +89,17 @@ Messages are read with the MIDI 1.0 protocol (Core MIDI converts MIDI 2.0 source
 Each shortcut is pressed the way fingers would: modifiers go down in order (⌃⌥⇧⌘), then the key, held for the key
 hold time, then everything is let go in reverse. Events carry the flags a real keyboard adds (arrows and F-keys
 count as function keys, keypad keys as keypad), come from a private event source (keys held on the real keyboard
-don't mix in), and are marked as Keystrike's own. Shortcuts are stored as key positions (key codes), so a recorded
+don't mix in), and are marked as MidiPress's own. Shortcuts are stored as key positions (key codes), so a recorded
 shortcut presses the same key you pressed, whatever the layout; keys are labelled with the current layout's
 characters. Text is typed as characters, independent of the layout; line breaks press Return and tabs Tab.
 
 Bringing an app forward asks macOS first; if macOS declines (it can refuse requests from an app in the background),
-Keystrike makes the app frontmost through Accessibility, then opens it as the Dock would, and gives it 80 ms to
+MidiPress makes the app frontmost through Accessibility, then opens it as the Dock would, and gives it 80 ms to
 focus its window before the keys arrive.
 
 ## Saved setup
 
-Everything is saved to `~/Library/Application Support/Keystrike/setup.json` (schema 1), readable JSON:
+Everything is saved to `~/Library/Application Support/MidiPress/setup.json` (schema 1), readable JSON:
 
 ```json
 {
@@ -117,15 +117,15 @@ Everything is saved to `~/Library/Application Support/Keystrike/setup.json` (sch
 }
 ```
 
-(IDs left out here.) A file from a newer Keystrike is shown as far as it can be read and never overwritten; a file
-that can't be read is moved aside (`setup.unreadable-<date>.json`) and Keystrike starts empty. Exports use the same
+(IDs left out here.) A file from a newer MidiPress is shown as far as it can be read and never overwritten; a file
+that can't be read is moved aside (`setup.unreadable-<date>.json`) and MidiPress starts empty. Exports use the same
 mapping format.
 
 ## Build and run
 
 ```sh
-./build.sh                       # builds build/Keystrike.app (ad-hoc signed)
-open build/Keystrike.app
+./build.sh                       # builds build/MidiPress.app (ad-hoc signed)
+open build/MidiPress.app
 ```
 
 Requires macOS 26 (Liquid Glass) and Xcode 26 or newer; the scripts use Xcode's toolchain. The icon is drawn by
@@ -134,23 +134,23 @@ Requires macOS 26 (Liquid Glass) and Xcode 26 or newer; the scripts use Xcode's 
 Command line (same engine, no window):
 
 ```sh
-build/Keystrike.app/Contents/MacOS/Keystrike --list-inputs        # MIDI inputs and the Accessibility status
-build/Keystrike.app/Contents/MacOS/Keystrike --monitor            # print incoming MIDI until Ctrl-C
-build/Keystrike.app/Contents/MacOS/Keystrike --self-test [folder] # checks the build; presses no keys
+build/MidiPress.app/Contents/MacOS/MidiPress --list-inputs        # MIDI inputs and the Accessibility status
+build/MidiPress.app/Contents/MacOS/MidiPress --monitor            # print incoming MIDI until Ctrl-C
+build/MidiPress.app/Contents/MacOS/MidiPress --self-test [folder] # checks the build; presses no keys
 ```
 
 ### With omso Builder
 
-`omso-build.json` describes the build: `build.sh`, the engine tests (`test.sh`), then `Keystrike --self-test`,
+`omso-build.json` describes the build: `build.sh`, the engine tests (`test.sh`), then `MidiPress --self-test`,
 which checks decoding, matching, the macro runner (with a recording stand-in for the keyboard), saving, and a Core
 MIDI round trip through a temporary virtual input and a temporary port. **Build & Install** copies
-`Keystrike.app` to `/Applications/omso`. Each installed ad-hoc build needs the Accessibility permission again.
+`MidiPress.app` to `/Applications/omso`. Each installed ad-hoc build needs the Accessibility permission again.
 
 ## Development
 
 ```sh
 ./test.sh                                     # engine tests: decoding, matching, runner, saving, Core MIDI
-KEYSTRIKE_SNAPSHOT=/tmp/shots build/Keystrike.app/Contents/MacOS/Keystrike   # screenshots, light and dark
+MIDIPRESS_SNAPSHOT=/tmp/shots build/MidiPress.app/Contents/MacOS/MidiPress   # screenshots, light and dark
 ```
 
 The tests never press keys or switch apps: the runner talks to a `KeyOutput`, and tests use a recording one with
@@ -159,7 +159,7 @@ Snapshot mode loads a made-up setup (no MIDI, nothing saved) and saves PNGs of t
 Recording permission for the terminal that launches it.
 
 ```text
-Sources/KeystrikeCore/      engine, no UI
+Sources/MidiPressCore/      engine, no UI
   Model.swift               triggers, keys, targets, steps, mappings, setup (and their file format)
   Matcher.swift             MIDI decoding (UMP and MIDI 1.0 bytes) and trigger matching
   MacroRunner.swift         runs steps one mapping at a time; the KeyOutput protocol
@@ -167,9 +167,9 @@ Sources/KeystrikeCore/      engine, no UI
   MIDIInput.swift           Core MIDI inputs and the virtual port; a test sender
   KeyCatalog.swift          key codes, names from the keyboard layout, keyboard flags
   Engine.swift, Store.swift MIDI → matcher → runner; setup.json, import and export
-Sources/Keystrike/          SwiftUI app: sidebar, editor, shortcut recorder, monitor, settings, command line,
+Sources/MidiPress/          SwiftUI app: sidebar, editor, shortcut recorder, monitor, settings, command line,
                             self-test, snapshots, updates
-Tests/KeystrikeCoreTests/   engine tests with a recording KeyOutput
+Tests/MidiPressCoreTests/   engine tests with a recording KeyOutput
 ```
 
 ## Updates and releases
@@ -178,7 +178,7 @@ Release builds can update themselves with [Sparkle](https://sparkle-project.org)
 `Package.swift`), like the other apps of the same label. A plain `./build.sh`, and omso Builder's builds, have no
 update feed: they never check for updates and show no update menu items. A release build gets `UPDATE_FEED_URL`,
 `UPDATE_PUBLIC_KEY` and `SIGN_IDENTITY` (a Developer ID, which also turns on the hardened runtime) from the
-environment. Keystrike isn't in the release tool yet.
+environment. MidiPress isn't in the release tool yet.
 
 ## Known limits
 

@@ -1,5 +1,5 @@
 import AppKit
-import KeystrikeCore
+import MidiPressCore
 import SwiftUI
 
 /// A made-up setup for screenshots and demos: no MIDI is opened, no keys are pressed, nothing is saved.
@@ -67,11 +67,11 @@ enum Demo {
     }
 }
 
-/// Development aid: `KEYSTRIKE_SNAPSHOT=<folder>` loads the demo setup, saves PNGs of the main states, each as
+/// Development aid: `MIDIPRESS_SNAPSHOT=<folder>` loads the demo setup, saves PNGs of the main states, each as
 /// `<state>-light.png` and `<state>-dark.png`, and quits. Needs Screen Recording permission for the terminal.
 enum Snapshot {
     static func runIfRequested(_ model: AppModel) {
-        guard let folder = ProcessInfo.processInfo.environment["KEYSTRIKE_SNAPSHOT"].map({ URL(fileURLWithPath: $0, isDirectory: true) })
+        guard let folder = ProcessInfo.processInfo.environment["MIDIPRESS_SNAPSHOT"].map({ URL(fileURLWithPath: $0, isDirectory: true) })
         else { return }
         Task { @MainActor in
             try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
@@ -151,7 +151,7 @@ enum Snapshot {
     }
 
     @MainActor static var mainWindow: NSWindow? {
-        NSApp.windows.first { $0.isVisible && $0.contentView != nil && $0.title == "Keystrike" }
+        NSApp.windows.first { $0.isVisible && $0.contentView != nil && $0.title == "MidiPress" }
             ?? NSApp.windows.first { $0.isVisible && $0.contentView != nil }
     }
 

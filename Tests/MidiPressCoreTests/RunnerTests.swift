@@ -1,6 +1,6 @@
 import CoreGraphics
 import XCTest
-@testable import KeystrikeCore
+@testable import MidiPressCore
 
 final class RunnerTests: XCTestCase {
     let control = UInt16(0x3B), option = UInt16(0x3A), shift = UInt16(0x38), command = UInt16(0x37)
@@ -67,18 +67,18 @@ final class RunnerTests: XCTestCase {
         XCTAssertEqual(output.keys.count, 2)
     }
 
-    func testKeysForTheFrontAppArentSentToKeystrikeItself() {
-        let keystrike = RunningApp(pid: 300, bundleID: "com.kitedrake.keystrike", name: "Keystrike")
-        let output = FakeOutput(apps: FakeOutput.defaultApps + [keystrike], front: keystrike)
+    func testKeysForTheFrontAppArentSentToMidiPressItself() {
+        let midipress = RunningApp(pid: 300, bundleID: "com.kitedrake.midipress", name: "MidiPress")
+        let output = FakeOutput(apps: FakeOutput.defaultApps + [midipress], front: midipress)
         let runner = MacroRunner(output: output)
-        runner.protectedApp = ("com.kitedrake.keystrike", "Keystrike")
+        runner.protectedApp = ("com.kitedrake.midipress", "MidiPress")
         XCTAssertEqual(runner.run(Mapping(name: "Save", steps: [.shortcut(KeyCode.s, [.command])]), keyHoldMS: 5),
-                       .skipped("Keystrike is in front; switch to the app the keys are for"))
+                       .skipped("MidiPress is in front; switch to the app the keys are for"))
         XCTAssertTrue(output.keys.isEmpty)
         // A mapping that brings its own app forward, or switches app first, still runs.
         let targeted = Mapping(name: "Bounce", target: Target(app: .logic, mode: .bringToFront), steps: [.shortcut(KeyCode.b)])
         guard case .finished = runner.run(targeted, keyHoldMS: 5) else { return XCTFail() }
-        output.front = keystrike
+        output.front = midipress
         guard case .finished = runner.run(Mapping(name: "Switch", steps: [Step(.activate(.logic)), .shortcut(KeyCode.space)]),
                                           keyHoldMS: 5) else { return XCTFail() }
     }

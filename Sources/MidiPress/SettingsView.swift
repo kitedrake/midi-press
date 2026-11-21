@@ -1,9 +1,9 @@
 import AppKit
-import KeystrikeCore
+import MidiPressCore
 import ServiceManagement
 import SwiftUI
 
-/// Whether Keystrike shows a Dock icon. Without one it lives in the menu bar (mappings never need the window).
+/// Whether MidiPress shows a Dock icon. Without one it lives in the menu bar (mappings never need the window).
 enum DockIcon {
     static let key = "showsDockIcon"
 
@@ -16,7 +16,7 @@ enum DockIcon {
     }
 }
 
-/// Keystrike › Settings…: login, Dock icon, key timing, MIDI inputs and the virtual port.
+/// MidiPress › Settings…: login, Dock icon, key timing, MIDI inputs and the virtual port.
 struct SettingsView: View {
     @Environment(AppModel.self) private var model
     @AppStorage(DockIcon.key) private var showsDockIcon = true
@@ -44,7 +44,7 @@ struct SettingsView: View {
                 }
                 Toggle("Show in Dock", isOn: $showsDockIcon)
             } footer: {
-                Text("Mappings work as long as Keystrike is open, also with its window closed. Without the Dock icon, open the window and these settings from the menu bar icon.")
+                Text("Mappings work as long as MidiPress is open, also with its window closed. Without the Dock icon, open the window and these settings from the menu bar icon.")
             }
 
             Section {
@@ -69,14 +69,14 @@ struct SettingsView: View {
                         }
                     }
                 }
-                Toggle("Offer a MIDI port named “Keystrike”", isOn: $model.offersVirtualPort)
+                Toggle("Offer a MIDI port named “MidiPress”", isOn: $model.offersVirtualPort)
                 if let error = model.virtualPortError {
                     Text(error).font(.callout).foregroundStyle(.red)
                 }
             } header: {
                 Text("MIDI Inputs")
             } footer: {
-                Text("Keystrike listens to the inputs that are on. Other apps (a DAW's MIDI output, a script) can also send to the “Keystrike” port.")
+                Text("MidiPress listens to the inputs that are on. Other apps (a DAW's MIDI output, a script) can also send to the “MidiPress” port.")
             }
 
             Section {
@@ -93,7 +93,7 @@ struct SettingsView: View {
             } header: {
                 Text("Permission")
             } footer: {
-                Text("macOS only lets apps with Accessibility access press keys for you. Keystrike sends nothing anywhere: it reads MIDI and presses keys on this Mac.")
+                Text("macOS only lets apps with Accessibility access press keys for you. MidiPress sends nothing anywhere: it reads MIDI and presses keys on this Mac.")
             }
         }
         .formStyle(.grouped)

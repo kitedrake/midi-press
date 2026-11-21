@@ -1,16 +1,16 @@
 #!/bin/sh
-# Builds Keystrike.app into build/. Uses Xcode's toolchain when Xcode is installed (the Command Line Tools don't
+# Builds MidiPress.app into build/. Uses Xcode's toolchain when Xcode is installed (the Command Line Tools don't
 # include the macOS 26 SDK that SwiftUI's Liquid Glass needs).
 #
 # Signing is ad-hoc unless SIGN_IDENTITY names a code-signing identity. macOS ties the Accessibility permission
-# (which Keystrike needs to press keys) to the app's signature: with ad-hoc signing every rebuild counts as a new
+# (which MidiPress needs to press keys) to the app's signature: with ad-hoc signing every rebuild counts as a new
 # app and has to be allowed again; with a stable identity ("Apple Development: …") the permission stays. A
 # "Developer ID Application" identity (releases) also turns on the hardened runtime and a secure timestamp, as
 # notarization requires.
 #
 # A plain ./build.sh has no update feed, so it never checks for updates. Release builds also set (see "Updates and
 # releases" in the README):
-#   UPDATE_FEED_URL    the Sparkle update feed, e.g. https://example.com/updates/keystrike/appcast.xml
+#   UPDATE_FEED_URL    the Sparkle update feed, e.g. https://example.com/updates/midipress/appcast.xml
 #   UPDATE_PUBLIC_KEY  the EdDSA public key (base64) whose private half signs the updates
 set -eu
 cd "$(dirname "$0")"
@@ -33,18 +33,18 @@ sign_code() {
   esac
 }
 
-xcrun swift build -c release --product Keystrike
+xcrun swift build -c release --product MidiPress
 bindir="$(xcrun swift build -c release --show-bin-path)"
-app="build/Keystrike.app"
+app="build/MidiPress.app"
 rm -rf "$app"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources" "$app/Contents/Frameworks"
-cp "$bindir/Keystrike" "$app/Contents/MacOS/Keystrike"
-# Sparkle, for in-app updates. Keystrike isn't sandboxed, so Sparkle's XPC services aren't needed.
+cp "$bindir/MidiPress" "$app/Contents/MacOS/MidiPress"
+# Sparkle, for in-app updates. MidiPress isn't sandboxed, so Sparkle's XPC services aren't needed.
 framework="$app/Contents/Frameworks/Sparkle.framework"
 ditto "$bindir/Sparkle.framework" "$framework"
 rm -rf "$framework/XPCServices" "$framework/Versions/B/XPCServices"
-if ! otool -l "$app/Contents/MacOS/Keystrike" | grep -q "@executable_path/../Frameworks"; then
-  install_name_tool -add_rpath @executable_path/../Frameworks "$app/Contents/MacOS/Keystrike"
+if ! otool -l "$app/Contents/MacOS/MidiPress" | grep -q "@executable_path/../Frameworks"; then
+  install_name_tool -add_rpath @executable_path/../Frameworks "$app/Contents/MacOS/MidiPress"
 fi
 updates=""
 if [ -n "$feed" ]; then
@@ -57,10 +57,10 @@ cat > "$app/Contents/Info.plist" <<PLIST
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-  <key>CFBundleName</key><string>Keystrike</string>
-  <key>CFBundleDisplayName</key><string>Keystrike</string>
-  <key>CFBundleIdentifier</key><string>com.kitedrake.keystrike</string>
-  <key>CFBundleExecutable</key><string>Keystrike</string>
+  <key>CFBundleName</key><string>MidiPress</string>
+  <key>CFBundleDisplayName</key><string>MidiPress</string>
+  <key>CFBundleIdentifier</key><string>com.kitedrake.midipress</string>
+  <key>CFBundleExecutable</key><string>MidiPress</string>
   <key>CFBundleIconFile</key><string>AppIcon</string>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleShortVersionString</key><string>${version}</string>
@@ -69,7 +69,7 @@ cat > "$app/Contents/Info.plist" <<PLIST
   <key>LSMinimumSystemVersion</key><string>26.0</string>
   <key>LSApplicationCategoryType</key><string>public.app-category.music</string>
   <key>NSHighResolutionCapable</key><true/>
-  <key>NSHumanReadableCopyright</key><string>Keystrike by omso. GNU GPL v3 or later.</string>
+  <key>NSHumanReadableCopyright</key><string>MidiPress by omso. GNU GPL v3 or later.</string>
 </dict>
 </plist>
 PLIST

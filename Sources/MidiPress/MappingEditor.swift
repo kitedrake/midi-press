@@ -1,4 +1,4 @@
-import KeystrikeCore
+import MidiPressCore
 import SwiftUI
 
 /// The detail pane: what fires a mapping (When), which app gets the keys (Where) and the steps (Do).

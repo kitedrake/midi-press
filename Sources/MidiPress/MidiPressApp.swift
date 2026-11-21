@@ -1,5 +1,5 @@
 import AppKit
-import KeystrikeCore
+import MidiPressCore
 import SwiftUI
 
 @main
@@ -9,16 +9,16 @@ enum Main {
         if ["--self-test", "--list-inputs", "--monitor", "--help"].contains(arguments.first ?? "") {
             exit(CommandLineTool.run(arguments))
         }
-        KeystrikeApp.main()
+        MidiPressApp.main()
     }
 }
 
-struct KeystrikeApp: App {
+struct MidiPressApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
     @State private var model = AppModel.shared
 
     var body: some Scene {
-        Window("Keystrike", id: "main") {
+        Window("MidiPress", id: "main") {
             RootView()
                 .environment(model)
                 .frame(minWidth: 860, minHeight: 540)
@@ -70,7 +70,7 @@ struct KeystrikeApp: App {
             }
         }
 
-        MenuBarExtra("Keystrike", systemImage: "pianokeys") {
+        MenuBarExtra("MidiPress", systemImage: "pianokeys") {
             MenuBarContent()
                 .environment(model)
         }
@@ -127,13 +127,13 @@ struct MenuBarContent: View {
         Text("\(model.setup.mappings.filter(\.isEnabled).count) mappings · \(model.listenedSourceCount) MIDI inputs")
         if !model.isTrusted {
             Divider()
-            Text("Keystrike can't press keys yet")
+            Text("MidiPress can't press keys yet")
             Button("Allow in Accessibility Settings…") { model.requestTrust() }
         }
         Divider()
         Button("Stop Running Mappings") { model.stopAll() }
         Divider()
-        Button("Open Keystrike") {
+        Button("Open MidiPress") {
             openWindow(id: "main")
             NSApp.activate()
         }
@@ -149,7 +149,7 @@ struct MenuBarContent: View {
                 updates.checkNow()
             }
         }
-        Button("Quit Keystrike") { NSApp.terminate(nil) }
+        Button("Quit MidiPress") { NSApp.terminate(nil) }
             .keyboardShortcut("q")
     }
 }
@@ -196,9 +196,9 @@ struct RootView: View {
                 }
             }
         }
-        .navigationTitle("Keystrike")
+        .navigationTitle("MidiPress")
         .navigationSubtitle(subtitle)
-        .alert("Keystrike", isPresented: Binding(get: { model.alert != nil }, set: { if !$0 { model.alert = nil } })) {
+        .alert("MidiPress", isPresented: Binding(get: { model.alert != nil }, set: { if !$0 { model.alert = nil } })) {
             Button("OK") { model.alert = nil }
         } message: {
             Text(model.alert ?? "")
@@ -222,9 +222,9 @@ struct AccessibilityBanner: View {
                 .font(.title2)
                 .foregroundStyle(.orange)
             VStack(alignment: .leading, spacing: 2) {
-                Text("Keystrike needs Accessibility access to press keys.")
+                Text("MidiPress needs Accessibility access to press keys.")
                     .font(.headline)
-                Text("Turn Keystrike on in System Settings › Privacy & Security › Accessibility. Mappings fire, but no keys reach your apps until then.")
+                Text("Turn MidiPress on in System Settings › Privacy & Security › Accessibility. Mappings fire, but no keys reach your apps until then.")
                     .font(.callout)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -254,7 +254,7 @@ struct EmptyState: View {
             VStack(spacing: 6) {
                 Text("Turn MIDI into keystrokes")
                     .font(.title2.weight(.semibold))
-                Text("Press a pad, hit a button or turn a knob on any MIDI controller, and Keystrike presses\nkeyboard shortcuts for you: one, or a whole sequence with pauses, in the app you choose.")
+                Text("Press a pad, hit a button or turn a knob on any MIDI controller, and MidiPress presses\nkeyboard shortcuts for you: one, or a whole sequence with pauses, in the app you choose.")
                     .font(.callout)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)

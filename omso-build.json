@@ -1,22 +1,22 @@
 {
   "schema": 1,
-  "name": "Keystrike",
+  "name": "MidiPress",
   "notes": [
-    "Release build of Keystrike.app (ad-hoc signed), the engine tests, and a self-test that checks MIDI decoding, matching, the macro runner, saving and a Core MIDI round trip (no keys are pressed); then copies Keystrike.app into /Applications/omso.",
+    "Release build of MidiPress.app (ad-hoc signed), the engine tests, and a self-test that checks MIDI decoding, matching, the macro runner, saving and a Core MIDI round trip (no keys are pressed); then copies MidiPress.app into /Applications/omso.",
     "An ad-hoc signed build has to be allowed again under Accessibility after each install.",
     "Needs Xcode 26 or newer (macOS 26 SDK)."
   ],
   "products": [
     {
-      "name": "Keystrike",
+      "name": "MidiPress",
       "configuration": "Release",
       "steps": [
         {"name": "Build", "run": ["/bin/sh", "{source}/build.sh"]},
         {"name": "Test", "run": ["/bin/sh", "{source}/test.sh"], "env": {"TMPDIR": "{tmp}"}},
-        {"name": "Self-test", "run": ["{source}/build/Keystrike.app/Contents/MacOS/Keystrike", "--self-test", "{run}/self-test"]}
+        {"name": "Self-test", "run": ["{source}/build/MidiPress.app/Contents/MacOS/MidiPress", "--self-test", "{run}/self-test"]}
       ],
       "install": [
-        {"copy": "build/Keystrike.app", "to": "/Applications/omso"}
+        {"copy": "build/MidiPress.app", "to": "/Applications/omso"}
       ]
     }
   ]

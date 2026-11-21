@@ -1,5 +1,5 @@
 import XCTest
-@testable import KeystrikeCore
+@testable import MidiPressCore
 
 final class MIDIParserTests: XCTestCase {
     let pads = SourceRef(uniqueID: 42, name: "Pads")
@@ -148,15 +148,15 @@ final class CoreMIDITests: XCTestCase {
             received.fulfill()
         }
         input.onMessages = { engine.receive($0) }
-        try input.start(clientName: "Keystrike Test")
-        try input.setVirtualPort(enabled: true, name: "Keystrike Test Port", uniqueID: nil)
-        let sender = try MIDITestSender(name: "Keystrike Test Pads")
+        try input.start(clientName: "MidiPress Test")
+        try input.setVirtualPort(enabled: true, name: "MidiPress Test Port", uniqueID: nil)
+        let sender = try MIDITestSender(name: "MidiPress Test Pads")
         input.reconnect()
         sender.emit([MIDITestSender.word(status: 0xB, channel: 0, 119, 1)])
-        XCTAssertTrue(sender.send([MIDITestSender.word(status: 0xB, channel: 0, 119, 1)], toDestinationNamed: "Keystrike Test Port"))
+        XCTAssertTrue(sender.send([MIDITestSender.word(status: 0xB, channel: 0, 119, 1)], toDestinationNamed: "MidiPress Test Port"))
         wait(for: [received], timeout: 5)
         engine.runner.waitUntilIdle()
-        XCTAssertEqual(Set(sources), ["Keystrike Test Pads: [\"Bounce\"]", "Keystrike Test Port (virtual port): [\"Bounce\"]"])
+        XCTAssertEqual(Set(sources), ["MidiPress Test Pads: [\"Bounce\"]", "MidiPress Test Port (virtual port): [\"Bounce\"]"])
         XCTAssertEqual(output.keys.count, 4 * 2, "⌃ down, B down, B up, ⌃ up, twice")
     }
 }

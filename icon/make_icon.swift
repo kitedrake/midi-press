@@ -1,4 +1,4 @@
-// Draws the Keystrike app icon (1024×1024 PNG): a drum pad joined by a cable to a keyboard key, on an
+// Draws the MidiPress app icon (1024×1024 PNG): a drum pad joined by a cable to a keyboard key, on an
 // amber-to-coral rounded square. Run by icon/make-icns.sh.
 import AppKit
 

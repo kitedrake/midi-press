@@ -7,8 +7,8 @@ import CoreGraphics
 /// Posting key events needs the Accessibility permission (System Settings › Privacy & Security ›
 /// Accessibility); without it macOS drops them silently, so the app checks `isTrusted` and says so.
 public final class SystemKeyOutput: KeyOutput, @unchecked Sendable {
-    /// Marks Keystrike's own events (`eventSourceUserData`), so they can be told apart from real typing.
-    public static let marker: Int64 = 0x4B53_5452  // "KSTR"
+    /// Marks MidiPress's own events (`eventSourceUserData`), so they can be told apart from real typing.
+    public static let marker: Int64 = 0x4D44_5052  // "MDPR"
 
     private let source: CGEventSource?
 
@@ -22,7 +22,7 @@ public final class SystemKeyOutput: KeyOutput, @unchecked Sendable {
 
     // MARK: Permission
 
-    /// Whether macOS lets Keystrike press keys (Accessibility).
+    /// Whether macOS lets MidiPress press keys (Accessibility).
     public static var isTrusted: Bool { AXIsProcessTrusted() }
 
     /// Shows macOS's own prompt, which leads to the Accessibility list in System Settings.

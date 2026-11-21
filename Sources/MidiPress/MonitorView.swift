@@ -1,5 +1,5 @@
 import AppKit
-import KeystrikeCore
+import MidiPressCore
 import SwiftUI
 
 /// Window › MIDI Monitor: incoming messages, the mappings they fired, and how each run went.
