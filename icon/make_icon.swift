@@ -1,5 +1,5 @@
-// Draws the MidiPress app icon (1024×1024 PNG): a drum pad joined by a cable to a keyboard key, on an
-// amber-to-coral rounded square. Run by icon/make-icns.sh.
+// Draws the MidiPress app icon (1024×1024 PNG): a pad pressing a key with ⌘ on it, on a charcoal tile.
+// Run by icon/make-icns.sh.
 import AppKit
 
 let size: CGFloat = 1024
@@ -11,67 +11,129 @@ NSGraphicsContext.current = context
 let cg = context.cgContext
 let space = CGColorSpaceCreateDeviceRGB()
 
-// macOS icon grid: the shape is inset from the canvas and has rounded corners.
+// MARK: Family style
+// The sibling apps' icon scripts share this part word for word: a solid colour tile shaded slightly lighter at the
+// top, one bold cream symbol with a gold accent, and a small kite tail in the lower-right corner. Only `tile` and the
+// symbol differ between apps. Change all of them together.
+
+func rgb(_ hex: UInt32, alpha: CGFloat = 1) -> CGColor {
+    CGColor(red: CGFloat((hex >> 16) & 0xff) / 255, green: CGFloat((hex >> 8) & 0xff) / 255,
+            blue: CGFloat(hex & 0xff) / 255, alpha: alpha)
+}
+/// `hex` moved `amount` of the way towards white (positive) or black (negative).
+func shade(_ hex: UInt32, _ amount: CGFloat) -> CGColor {
+    let c = rgb(hex).components!
+    let target: CGFloat = amount > 0 ? 1 : 0
+    let t = abs(amount)
+    return CGColor(red: c[0] + (target - c[0]) * t, green: c[1] + (target - c[1]) * t, blue: c[2] + (target - c[2]) * t, alpha: 1)
+}
+let cream = rgb(0xf6f0e4)
+let gold = rgb(0xe2b552)
+let tile: UInt32 = 0x2a2724  // charcoal
+
+// The tile, on the macOS icon grid: inset from the canvas, with rounded corners and a drop shadow.
 let inset: CGFloat = 100
-let rect = CGRect(x: inset, y: inset, width: size - 2 * inset, height: size - 2 * inset)
-let shape = CGPath(roundedRect: rect, cornerWidth: 185, cornerHeight: 185, transform: nil)
+let shape = CGPath(roundedRect: CGRect(x: inset, y: inset, width: size - 2 * inset, height: size - 2 * inset),
+                   cornerWidth: 185, cornerHeight: 185, transform: nil)
 cg.saveGState()
 cg.setShadow(offset: CGSize(width: 0, height: -12), blur: 28, color: CGColor(gray: 0, alpha: 0.35))
-cg.addPath(shape); cg.setFillColor(CGColor(red: 0.55, green: 0.22, blue: 0.10, alpha: 1)); cg.fillPath()
+cg.addPath(shape); cg.setFillColor(rgb(tile)); cg.fillPath()
 cg.restoreGState()
 cg.saveGState()
 cg.addPath(shape); cg.clip()
-let background = CGGradient(colorsSpace: space, colors: [
-    CGColor(red: 1.00, green: 0.71, blue: 0.20, alpha: 1), CGColor(red: 0.94, green: 0.32, blue: 0.30, alpha: 1)] as CFArray,
-    locations: [0, 1])!
-cg.drawLinearGradient(background, start: CGPoint(x: inset, y: size - inset), end: CGPoint(x: size - inset, y: inset), options: [])
-let shine = CGGradient(colorsSpace: space, colors: [CGColor(gray: 1, alpha: 0.22), CGColor(gray: 1, alpha: 0)] as CFArray, locations: [0, 1])!
-cg.drawLinearGradient(shine, start: CGPoint(x: size / 2, y: size - inset), end: CGPoint(x: size / 2, y: size / 2), options: [])
+let tileShade = CGGradient(colorsSpace: space, colors: [shade(tile, 0.10), rgb(tile), shade(tile, -0.10)] as CFArray,
+                           locations: [0, 0.5, 1])!
+cg.drawLinearGradient(tileShade, start: CGPoint(x: 0, y: size - inset), end: CGPoint(x: 0, y: inset), options: [])
 cg.restoreGState()
 
-let white = CGColor(gray: 1, alpha: 0.97)
-let ink = CGColor(red: 0.80, green: 0.30, blue: 0.20, alpha: 1)
+/// Draws `body` with a soft shadow under it, so the symbol sits just above the tile.
+func raised(_ body: () -> Void) {
+    cg.saveGState()
+    cg.setShadow(offset: CGSize(width: 0, height: -8), blur: 18, color: CGColor(gray: 0, alpha: 0.18))
+    cg.beginTransparencyLayer(auxiliaryInfo: nil)
+    body()
+    cg.endTransparencyLayer()
+    cg.restoreGState()
+}
 
-// The pad (upper left) and the key (lower right).
-let pad = CGRect(x: 230, y: 560, width: 250, height: 250)
-let key = CGRect(x: 520, y: 220, width: 290, height: 290)
+/// The family mark: a wavy cream ribbon hanging from a gold bow, like a kite's tail.
+func kiteTail() {
+    let knot = CGPoint(x: 796, y: 246)
+    let ribbon = CGMutablePath()
+    let steps = 40
+    for i in 0...steps {
+        let t = CGFloat(i) / CGFloat(steps)
+        let point = CGPoint(x: knot.x + sin(t * 2 * .pi) * (6 + 10 * t), y: knot.y - 96 * t)
+        if i == 0 { ribbon.move(to: point) } else { ribbon.addLine(to: point) }
+    }
+    cg.addPath(ribbon)
+    cg.setStrokeColor(cream); cg.setLineWidth(15); cg.setLineCap(.round); cg.setLineJoin(.round)
+    cg.strokePath()
+    let s: CGFloat = 21
+    let bow = CGMutablePath()
+    for side: CGFloat in [-1, 1] {
+        bow.move(to: knot)
+        bow.addLine(to: CGPoint(x: knot.x + side * s, y: knot.y + s * 0.7))
+        bow.addLine(to: CGPoint(x: knot.x + side * s, y: knot.y - s * 0.7))
+        bow.closeSubpath()
+    }
+    cg.addPath(bow); cg.setFillColor(gold); cg.fillPath()
+    cg.addEllipse(in: CGRect(x: knot.x - 6, y: knot.y - 6, width: 12, height: 12)); cg.fillPath()
+}
 
-// Cable from the pad's right edge to the key's top, behind both.
-cg.move(to: CGPoint(x: pad.maxX - 10, y: pad.midY))
-cg.addCurve(to: CGPoint(x: key.midX, y: key.maxY - 10), control1: CGPoint(x: key.midX + 40, y: pad.midY),
-            control2: CGPoint(x: key.midX, y: key.maxY + 130))
-cg.setStrokeColor(CGColor(gray: 1, alpha: 0.6))
-cg.setLineWidth(34)
-cg.setLineCap(.round)
-cg.strokePath()
+// MARK: Symbol
 
-// Pad: a rounded square with a glowing centre, as on a pad controller.
-cg.addPath(CGPath(roundedRect: pad, cornerWidth: 46, cornerHeight: 46, transform: nil))
-cg.setFillColor(white)
-cg.fillPath()
-let glow = CGGradient(colorsSpace: space, colors: [CGColor(red: 1, green: 0.62, blue: 0.25, alpha: 0.95),
-                                                   CGColor(red: 1, green: 0.62, blue: 0.25, alpha: 0)] as CFArray, locations: [0, 1])!
-cg.saveGState()
-cg.addPath(CGPath(roundedRect: pad.insetBy(dx: 28, dy: 28), cornerWidth: 30, cornerHeight: 30, transform: nil))
-cg.clip()
-cg.drawRadialGradient(glow, startCenter: CGPoint(x: pad.midX, y: pad.midY), startRadius: 0,
-                      endCenter: CGPoint(x: pad.midX, y: pad.midY), endRadius: 130, options: [])
-cg.restoreGState()
+// A pad pressing down on a key with ⌘ on it; gold lines on both sides show the press.
 
-// Key: a keycap with a deeper base, and a ⌘ on top.
-cg.addPath(CGPath(roundedRect: key, cornerWidth: 58, cornerHeight: 58, transform: nil))
-cg.setFillColor(CGColor(gray: 0.86, alpha: 1))
-cg.fillPath()
-let top = CGRect(x: key.minX + 22, y: key.minY + 46, width: key.width - 44, height: key.height - 64)
-cg.addPath(CGPath(roundedRect: top, cornerWidth: 44, cornerHeight: 44, transform: nil))
-cg.setFillColor(white)
-cg.fillPath()
-let symbol = NSAttributedString(string: "⌘", attributes: [
-    .font: NSFont.systemFont(ofSize: 150, weight: .semibold),
-    .foregroundColor: NSColor(cgColor: ink)!,
-])
-let bounds = symbol.size()
-symbol.draw(at: CGPoint(x: top.midX - bounds.width / 2, y: top.midY - bounds.height / 2 + 4))
+/// A closed path through `points` with each corner rounded by `radius`.
+func rounded(_ points: [CGPoint], radius: CGFloat) -> CGPath {
+    let path = CGMutablePath()
+    let n = points.count
+    let start = CGPoint(x: (points[n - 1].x + points[0].x) / 2, y: (points[n - 1].y + points[0].y) / 2)
+    path.move(to: start)
+    for i in 0..<n {
+        path.addArc(tangent1End: points[i], tangent2End: points[(i + 1) % n], radius: radius)
+    }
+    path.closeSubpath()
+    return path
+}
+let edge = CGColor(red: 0.85, green: 0.81, blue: 0.74, alpha: 1)  // the cream's shaded side
 
+raised {
+    // The pad: a rounded square with a shaded lower edge.
+    let pad = CGRect(x: 397, y: 600, width: 230, height: 200)
+    cg.addPath(CGPath(roundedRect: pad, cornerWidth: 44, cornerHeight: 44, transform: nil))
+    cg.setFillColor(edge); cg.fillPath()
+    cg.addPath(CGPath(roundedRect: CGRect(x: pad.minX, y: pad.minY + 22, width: pad.width, height: pad.height - 22),
+                      cornerWidth: 44, cornerHeight: 44, transform: nil))
+    cg.setFillColor(cream); cg.fillPath()
+
+    // The key: a wide shaded base under a top that narrows upwards, like a keycap seen from the front.
+    cg.addPath(CGPath(roundedRect: CGRect(x: 340, y: 236, width: 344, height: 110), cornerWidth: 30, cornerHeight: 30,
+                      transform: nil))
+    cg.setFillColor(edge); cg.fillPath()
+    let top = rounded([CGPoint(x: 352, y: 280), CGPoint(x: 672, y: 280), CGPoint(x: 648, y: 506), CGPoint(x: 376, y: 506)],
+                      radius: 32)
+    cg.addPath(top); cg.setFillColor(cream); cg.fillPath()
+    let symbol = NSAttributedString(string: "⌘", attributes: [
+        .font: NSFont.systemFont(ofSize: 150, weight: .bold),
+        .foregroundColor: NSColor(cgColor: rgb(tile))!,
+    ])
+    let bounds = symbol.size()
+    symbol.draw(at: CGPoint(x: size / 2 - bounds.width / 2, y: 393 - bounds.height / 2))
+
+    // Press lines: three on each side, fanning out between the pad and the key.
+    cg.setStrokeColor(gold); cg.setLineWidth(22); cg.setLineCap(.round)
+    for side: CGFloat in [-1, 1] {
+        for (from, to) in [((150, 598), (196, 630)), ((150, 552), (210, 552)), ((150, 506), (196, 474))] as [((CGFloat, CGFloat), (CGFloat, CGFloat))] {
+            cg.move(to: CGPoint(x: size / 2 + side * from.0, y: from.1))
+            cg.addLine(to: CGPoint(x: size / 2 + side * to.0, y: to.1))
+        }
+    }
+    cg.strokePath()
+}
+kiteTail()
+
+NSGraphicsContext.current = nil
 guard let png = rep.representation(using: .png, properties: [:]) else { fatalError("no png") }
 try! png.write(to: URL(fileURLWithPath: out))
