@@ -2,8 +2,8 @@
   "schema": 1,
   "files": {
     ".agent-config/render.py": "72168bdba8a841e17e7af3f43cb12bf3902242cd6091d40ca7cafe6f77a47562",
-    ".agent-config/shared.json": "44807f1c955e9f8a508c13be6e87175a217f6c8a00de82ea0bd1c83ddbb18c05",
-    "AGENTS.md": "a7dae2bf34458ba5f73a793fabdd7f5516f5bfbdf21b487765bd1867e9bb90f5",
-    "CLAUDE.md": "a7dae2bf34458ba5f73a793fabdd7f5516f5bfbdf21b487765bd1867e9bb90f5"
+    ".agent-config/shared.json": "5deef3483c27ea8d86662bb184e56c7d49eb2677031ad0aea1cf39a0b253d2ff",
+    "AGENTS.md": "0688f3b629cad92784ce1bec9998e0b5077bfd83acd2a83cc013fc31e7f585a2",
+    "CLAUDE.md": "0688f3b629cad92784ce1bec9998e0b5077bfd83acd2a83cc013fc31e7f585a2"
   }
 }
