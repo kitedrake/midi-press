@@ -23,5 +23,8 @@
   overlays.
 - In-app updates use Sparkle, pinned in `Package.swift`. Only release builds (`UPDATE_FEED_URL` and
   `UPDATE_PUBLIC_KEY` set) contain an updater; keep plain and omso Builder builds without one. `CFBundleVersion`
-  is `VERSION`, which Sparkle compares, so bump `VERSION` for every release. Releases would go through `release.py`
-  in the `software-site` repository once MidiPress is added there. Never commit signing keys.
+  is `VERSION`, which Sparkle compares, so bump `VERSION` for every release. Releases are annotated `v<version>` tags
+  (push one only when the owner asks); the Release workflow builds and publishes them, and `release.py` in the
+  `software-site` repository is the local fallback. Never commit signing keys.
+- `scripts/release-ci.sh` is identical in every Kitedrake app repository; change all copies together. Release secrets
+  (Apple certificate, notary key, Sparkle key, site token) live only in GitHub secrets, never in files.

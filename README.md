@@ -178,7 +178,22 @@ Release builds can update themselves with [Sparkle](https://sparkle-project.org)
 `Package.swift`), like the other apps of the same label. A plain `./build.sh`, and omso Builder's builds, have no
 update feed: they never check for updates and show no update menu items. A release build gets `UPDATE_FEED_URL`,
 `UPDATE_PUBLIC_KEY` and `SIGN_IDENTITY` (a Developer ID, which also turns on the hardened runtime) from the
-environment. MidiPress isn't in the release tool yet.
+environment.
+
+To release: bump `VERSION` and push it, then push an annotated tag whose message is the release notes, one note per
+line:
+
+```sh
+git tag -a v1.2.3 -m "First note" -m "Second note" && git push origin v1.2.3
+```
+
+The Release workflow (`.github/workflows/release.yml`) runs `scripts/release-ci.sh` on a GitHub Mac: it builds with
+the update feed, runs the tests and the self-test, signs and notarizes the app when the Apple secrets are set, signs
+the update when `SPARKLE_PRIVATE_KEY` is set, and publishes a GitHub release with the zip and `update.json` (a
+pre-release until it's notarized). kitedrake.com then lists it for download and, once it's signed and notarized, in
+the update feed. A push to `main` that changes the workflow or the script does a dry run without publishing.
+`scripts/release-ci.sh` is the same file in every Kitedrake app repository: change all copies together.
+`sh scripts/test-update.sh midipress` in the site repository tests a real update end to end with a throwaway key.
 
 ## Known limits
 
