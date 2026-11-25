@@ -11,8 +11,10 @@ sends value 1 of CC 119 bringing Logic forward, pressing ⌃⌘B, waiting 400 ms
 - **Mappings** (sidebar): each one has a trigger (When), a target app (Where) and steps (Do). The checkbox turns a
   mapping on or off; the dot lights up when it fires. Drag to reorder; right-click to run, learn, duplicate, export or
   delete.
-- **When**: **Learn** (⌘L) takes the next MIDI message: its kind, number and channel, and for a controller its
-  exact value (a pad sends one value per press). Or set it by hand: Control Change, Note On, Note Off, Program
+- **When**: **Learn** (⌘L) takes the next MIDI message: its kind, number, channel and the input it came from, and
+  for a controller its exact value (a pad sends one value per press). So two controllers sending the same CC can
+  each fire their own mapping; set **Input** to **Any input** to accept it from all of them. The input appears under
+  the trigger. Or set it by hand: Control Change, Note On, Note Off, Program
   Change or Pitch Bend; a number; any value, an exact value or a range; a channel; one input or all of them. A
   controller with a range can fire on every matching message or only when the value enters the range (a fader
   crossing a point fires once). An endless encoder sends one value per direction: map each to its own shortcut.
@@ -79,7 +81,8 @@ that bring their app forward, or start by switching app, still run.
 MidiPress listens to every MIDI input macOS offers (USB, Bluetooth, network sessions, the IAC driver), except the
 ones turned off in Settings, and picks up devices as they're plugged in. It also offers a virtual MIDI port named
 **MidiPress**, so other apps can send to it directly: a DAW track's MIDI output, a control-surface script, a
-Max patch. The port keeps its Core MIDI unique ID across launches, so apps that remember ports find it again.
+Max patch. The port keeps its Core MIDI unique ID across launches, so apps that remember ports find it again, and
+it is listed in each mapping's **Input** menu like any other input.
 
 Messages are read with the MIDI 1.0 protocol (Core MIDI converts MIDI 2.0 sources). Notes are named with middle C
 (60) as C3, as Logic Pro and Ableton Live show them. A Note On with velocity 0 counts as a Note Off.

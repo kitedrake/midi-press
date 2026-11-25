@@ -177,6 +177,20 @@ public struct Trigger: Codable, Hashable, Sendable {
         return true
     }
 
+    /// Learn: takes the message's kind, number, channel and input; for a controller its exact value (a pad sends
+    /// one value per press), for notes, programs and pitch bend any value.
+    public mutating func learn(_ message: MIDIMessage) {
+        kind = message.kind
+        number = message.number
+        channel = message.channel
+        switch message.kind {
+        case .controlChange: value = .exactly(message.value)
+        case .noteOn, .noteOff, .pitchBend, .programChange: value = .any
+        }
+        fire = .everyMessage
+        source = message.source
+    }
+
     public var usesValue: Bool { kind.valueTitle != nil }
 
     /// "CC 119 = 1", "Note C3 (60)", "Program 5"

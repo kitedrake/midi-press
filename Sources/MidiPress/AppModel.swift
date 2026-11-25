@@ -122,6 +122,8 @@ final class AppModel {
     /// False when setup.json came from a newer MidiPress: it is never overwritten.
     var canSave = true
     var virtualPortError: String?
+    /// The "MidiPress" port as an input (offered in each mapping's Input menu), or nil when it's off.
+    var virtualPort: SourceRef?
     var midiError: String?
 
     @ObservationIgnored let engine = Engine(output: SystemKeyOutput())
@@ -250,6 +252,7 @@ final class AppModel {
         } catch {
             virtualPortError = error.localizedDescription
         }
+        virtualPort = midi.virtualPortRef
     }
 
     func setListening(to source: MIDISourceInfo, _ on: Bool) {
@@ -291,22 +294,9 @@ final class AppModel {
         learnTimeout?.cancel()
     }
 
-    /// Sets a mapping's trigger from a message: its kind, number and channel; for a controller its exact value
-    /// (a pad sends one value per press), for notes any velocity.
+    /// Sets a mapping's trigger from a message (see `Trigger.learn`), including the input it came from.
     func learn(_ message: MIDIMessage, into id: UUID) {
-        update(id) { mapping in
-            var trigger = mapping.trigger
-            trigger.kind = message.kind
-            trigger.number = message.number
-            trigger.channel = message.channel
-            switch message.kind {
-            case .controlChange: trigger.value = .exactly(message.value)
-            case .noteOn, .noteOff, .pitchBend, .programChange: trigger.value = .any
-            }
-            trigger.fire = .everyMessage
-            if let source = trigger.source, !source.matches(message.source) { trigger.source = nil }
-            mapping.trigger = trigger
-        }
+        update(id) { $0.trigger.learn(message) }
         stopLearning()
     }
 

@@ -144,6 +144,13 @@ public final class MIDIInput: @unchecked Sendable {
         return actual
     }
 
+    /// The virtual port as an input (messages sent to it carry this), or nil when it's off.
+    public var virtualPortRef: SourceRef? {
+        lock.lock()
+        defer { lock.unlock() }
+        return destinationRef
+    }
+
     // MARK: Receiving
 
     private func receive(_ list: UnsafePointer<MIDIEventList>, token: Int) {

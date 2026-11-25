@@ -119,6 +119,19 @@ final class MatcherTests: XCTestCase {
                        "pitch bend has no number")
     }
 
+    func testLearnTakesTheInputTheMessageCameFrom() {
+        var trigger = Trigger(kind: .noteOn, channel: 3, number: 40, value: .between(10, 20), fire: .onEnter, source: keys)
+        trigger.learn(cc(119, 1, channel: 1, source: pads))
+        XCTAssertEqual(trigger, Trigger(kind: .controlChange, channel: 1, number: 119, value: .exactly(1), fire: .everyMessage, source: pads))
+        // The same CC from another controller doesn't fire it.
+        var matcher = Matcher(mappings: [mapping("Pads", trigger)])
+        XCTAssertEqual(matcher.match(cc(119, 1, channel: 1, source: pads)).map(\.name), ["Pads"])
+        XCTAssertEqual(matcher.match(cc(119, 1, channel: 1, source: keys)).map(\.name), [])
+        // Notes learn any velocity.
+        trigger.learn(MIDIMessage(kind: .noteOn, channel: 9, number: 36, value: 98, source: keys))
+        XCTAssertEqual(trigger, Trigger(kind: .noteOn, channel: 9, number: 36, value: .any, source: keys))
+    }
+
     func testTriggerSummaries() {
         XCTAssertEqual(Trigger(kind: .controlChange, number: 119, value: .exactly(1)).summary, "CC 119 = 1")
         XCTAssertEqual(Trigger(kind: .noteOn, channel: 9, number: 36).summary, "Note C1 · ch 10")

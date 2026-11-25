@@ -19,7 +19,7 @@ enum Demo {
     static var setup: Setup {
         Setup(mappings: [
             Mapping(name: "Bounce in Place",
-                    trigger: Trigger(kind: .controlChange, channel: 0, number: 119, value: .exactly(1)),
+                    trigger: Trigger(kind: .controlChange, channel: 0, number: 119, value: .exactly(1), source: launchpad),
                     target: Target(app: logic, mode: .bringToFront, returnToPrevious: true),
                     steps: [.shortcut(KeyCode.b, [.control, .command]), .delay(400), .shortcut(KeyCode.returnKey)]),
             Mapping(name: "Zoom In", trigger: Trigger(kind: .controlChange, number: 20, value: .exactly(1), source: faders),

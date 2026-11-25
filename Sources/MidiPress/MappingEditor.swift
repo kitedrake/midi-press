@@ -88,12 +88,13 @@ struct TriggerSection: View {
 
     private var sourceChoices: [SourceRef] {
         var refs = model.sources.map(\.ref)
+        if let port = model.virtualPort { refs.append(port) }
         if let saved = trigger.source, !refs.contains(saved) { refs.append(saved) }
         return refs
     }
 
     private func isConnected(_ ref: SourceRef) -> Bool {
-        model.sources.contains { $0.ref == ref && !$0.isOffline }
+        ref == model.virtualPort || model.sources.contains { !$0.isOffline && ref.matches($0.ref) }
     }
 
     private var footer: String {
@@ -127,7 +128,7 @@ struct LearnRow: View {
             VStack(alignment: .leading, spacing: 1) {
                 Text(listening ? "Listening…" : trigger.summary)
                     .font(.title3.weight(.semibold))
-                Text(listening ? "Press a pad, hit a button or move a control." : "What fires this mapping")
+                Text(listening ? "Press a pad, hit a button or move a control." : trigger.source.map { "From \($0.name)" } ?? "From any MIDI input")
                     .font(.callout)
                     .foregroundStyle(.secondary)
             }
@@ -142,7 +143,7 @@ struct LearnRow: View {
             } else {
                 Button("Learn") { model.startLearning(id) }
                     .buttonStyle(.glassProminent)
-                    .help("Set the trigger from the next MIDI message (⌘L)")
+                    .help("Set the trigger, and the input it comes from, from the next MIDI message (⌘L)")
             }
         }
         .padding(.vertical, 4)
