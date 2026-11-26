@@ -33,8 +33,10 @@ sign_code() {
   esac
 }
 
-xcrun swift build -c release --product MidiPress
-bindir="$(xcrun swift build -c release --show-bin-path)"
+# The packages are public: --disable-keychain stops SwiftPM looking for github.com passwords in the Keychain when it
+# downloads Sparkle's framework, which makes macOS ask to use whatever GitHub credentials are saved there.
+xcrun swift build --disable-keychain -c release --product MidiPress
+bindir="$(xcrun swift build --disable-keychain -c release --show-bin-path)"
 app="build/MidiPress.app"
 rm -rf "$app"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources" "$app/Contents/Frameworks"
