@@ -51,8 +51,7 @@ sends value 1 of CC 119 bringing Logic forward, pressing ⌃⌘B, waiting 400 ms
   <img src="docs/screenshots/monitor-dark.png" alt="The MIDI Monitor" width="49%">
 </picture>
 
-*Screenshots made with MidiPress's snapshot mode on a made-up setup (see Development); GitHub shows the light or
-dark set to match your theme.*
+*Screenshots show a made-up setup; GitHub shows the light or dark set to match your theme.*
 
 MidiPress is open source under the GNU General Public License, version 3 or later (`LICENSE`). Copyright (C) 2026
 omso.
@@ -153,13 +152,10 @@ MIDI round trip through a temporary virtual input and a temporary port. **Build 
 
 ```sh
 ./test.sh                                     # engine tests: decoding, matching, runner, saving, Core MIDI
-MIDIPRESS_SNAPSHOT=/tmp/shots build/MidiPress.app/Contents/MacOS/MidiPress   # screenshots, light and dark
 ```
 
 The tests never press keys or switch apps: the runner talks to a `KeyOutput`, and tests use a recording one with
 made-up apps. One test opens a temporary Core MIDI source and port in the test process (no permission prompt).
-Snapshot mode loads a made-up setup (no MIDI, nothing saved) and saves PNGs of the main states; it needs Screen
-Recording permission for the terminal that launches it.
 
 ```text
 Sources/MidiPressCore/      engine, no UI
