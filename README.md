@@ -56,6 +56,26 @@ sends value 1 of CC 119 bringing Logic forward, pressing ⌃⌘B, waiting 400 ms
 MidiPress is open source under the GNU General Public License, version 3 or later (`LICENSE`). Copyright (C) 2026
 omso.
 
+## Download
+
+Download the newest preview from the [Releases page](https://github.com/kitedrake/midi-press/releases): the
+`MidiPress-<version>.zip` file under **Assets**. It needs macOS 26 or later on a Mac with Apple silicon.
+
+**Preview build.** MidiPress isn't signed or notarized by Apple yet, so macOS warns about it the first time you open
+it. To open it anyway:
+
+1. Unzip the download and move MidiPress to your Applications folder.
+2. Open MidiPress. When macOS says it can't verify the app, click **Done**.
+3. Open **System Settings › Privacy & Security**, scroll down to **Security** and click **Open Anyway** next to the
+   message about MidiPress. The button shows for about an hour after you tried to open the app.
+4. Confirm with **Open Anyway** and your password or Touch ID when macOS asks. From then on, MidiPress opens normally.
+
+On current macOS, right-clicking the app and choosing **Open** no longer skips this warning. If you prefer Terminal:
+`xattr -dr com.apple.quarantine /Applications/MidiPress.app`
+
+To press keys for you, MidiPress also needs Accessibility access: it shows a banner with **Allow…** until you
+grant it (see [Permission: Accessibility](#permission-accessibility)).
+
 ## Permission: Accessibility
 
 macOS only lets an app press keys for you once it is allowed under **System Settings › Privacy & Security ›
