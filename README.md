@@ -59,7 +59,8 @@ omso.
 ## Download
 
 Download the newest preview from the [Releases page](https://github.com/kitedrake/midi-press/releases): the
-`MidiPress-<version>.zip` file under **Assets**. It needs macOS 26 or later on a Mac with Apple silicon.
+`MidiPress-<version>.zip` file under **Assets**. It needs macOS 26 or later and runs on
+both Apple silicon and Intel Macs.
 
 **Preview build.** MidiPress isn't signed or notarized by Apple yet, so macOS warns about it the first time you open
 it. To open it anyway:
@@ -146,7 +147,7 @@ mapping format.
 ## Build and run
 
 ```sh
-./build.sh                       # builds build/MidiPress.app (ad-hoc signed)
+./build.sh                       # builds build/MidiPress.app (universal, ad-hoc signed)
 open build/MidiPress.app
 ```
 
